@@ -1,6 +1,6 @@
 # GeigerCounterCajoe
 
-The GeigerCounter from Cajoe GMV-2 runs with approximately 20000 Baud
+The GeigerCounter from Cajoe GMV2 runs with approximately 20000 Baud
 The file geigertool.py interprets the data, which is sent via USB.
 
 options:
