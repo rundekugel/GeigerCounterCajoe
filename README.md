@@ -1,6 +1,6 @@
 # GeigerCounterCajoe
 
-The GeigerCounter from Cajoe GMV-2 runs with 20000Baud
+The GeigerCounter from Cajoe GMV-2 runs with approximately 20000 Baud
 The file geigertool.py interprets the data, which is sent via USB.
 
 options:
@@ -14,3 +14,8 @@ options:
   
 for Linux: use -p=/dev/ttyUSBx, where x is the number of the virtual serial port from the GMV-2
 for Windows: use -p=COMx where x is the port, where the vortual GMV-2 serial port is installed.
+
+todo:
+ - measure the baudrate.
+ - make it useable as lib
+ - store measurements in a buffer
