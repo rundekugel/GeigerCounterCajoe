@@ -9,12 +9,11 @@ options:
 -bs=<blocksize>
 -xo=<0|1>          xon/xoff
 -ts=<0|1|r>          timestamp on/off/relative
-
 """
 
 import serial
 import time
-import sys
+import sys,os
 import struct
 
 
@@ -38,6 +37,13 @@ S64="q"
 f32="f"
 f64="d"  
   
+if sys.version_info[0] == 2:
+  stringinstance = basestring
+elif sys.version_info[0]==3:
+  stringinstance = str
+else:
+  raise Exception("unknown python version: "+ str(sys.version_info))
+    
 
 WHITESPACES = [0,7,8,9,10,12,0xff]
 def hexdump(src, length=16, startaddr=0):
@@ -85,6 +91,26 @@ def hexdump3(src, length=16, startaddr=0):
        else:
          result.append("%-*s   %s" % ( length * (digits + 1), hexa, text))
     return os.linesep.join(result)
+
+
+def bytes2string(bytesa, nullterminated = True):
+  if sys.version_info.major==3:
+    return bytes2string3(bytesa, nullterminated )
+  t=b""
+  for c in bytesa:
+    if c == 0 and nullterminated:
+      return t
+    t += chr(c)
+  return t
+
+def bytes2string3(bytesa, nullterminated = True):
+  '''Converts byte list to bytestring'''
+  t = bytearray(b'')
+  for c in bytesa:
+    if c == 0 and nullterminated:
+      return bytes(t)
+    t.append(c)
+  return bytes(t)
 
 
 def dumpasfloat(t):
