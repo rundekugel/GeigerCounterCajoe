@@ -12,10 +12,11 @@ options:
 -xo=<0|1>          xon/xoff
 -ts=<0|1|r>          timestamp on/off/relative
   
-for Linux: use -p=/dev/ttyUSBx, where x is the number of the virtual serial port from the GMV-2
-for Windows: use -p=COMx where x is the port, where the vortual GMV-2 serial port is installed.
+For Linux: use -p=/dev/ttyUSBx, where x is the number of the virtual serial port from the GMV-2.
 
-todo:
+For Windows: use -p=COMx where x is the port, where the vortual GMV-2 serial port is installed.
+
+To do:
  - measure the baudrate.
  - make it useable as lib
  - store measurements in a buffer
