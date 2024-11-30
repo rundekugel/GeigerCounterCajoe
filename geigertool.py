@@ -16,6 +16,7 @@ import time
 import sys,os
 import struct
 
+__version__ = "0.1.0"
 
 #print(sys.version)
 py3 = sys.version_info[0]==3
@@ -227,6 +228,11 @@ def getTimestamp():
   r=f"{t[0]:02}:{t[1]:02}:{t[2]:02}.{t10:} "
   return r
   
+class datacontainer:
+    ush = None
+    usa = 0
+    bat = None  
+  
 #-- main --
 def main():
   global baudrate, port, xonoff, verbosity
@@ -234,6 +240,8 @@ def main():
   allFormat=0
   formats=[]
   timestamp=0
+  
+  print("Reader for Cajoe Geiger Counter Version:"+__version__)
   
   try:
     for p in sys.argv:
