@@ -25,7 +25,7 @@ baudrate= 19200
 baudrate= 20000
 port="/dev/ttyUSB0"
 xonoff = 0
-verbosity=1 
+verbosity=0
   
 U8="B"
 S8="b"
@@ -179,22 +179,32 @@ def decode(t):
     t = t.decode("utf-8", "ignore")
     if t[:7] == "v*10000":
       t=t[7:].split('l')[0]
-      r=(">>>1 usv acc: "+t, round(float(t)/10e3,7) )
+      v= float(t)/10e3
+      r=(">>>1 usv acc: "+t, round(v,7) )
+      datacontainer.usa = v
       return r
     if "v*10000" in t:
       t=t.split("v*10000")[1].split('l')[0]
-      r==(">>>usv acc: "+t, round(float(t)/10e3,7) )
+      v= float(t)/10e3
+      r=(">>>usv acc: "+t, round(v,7) )
+      datacontainer.usa = v
       return r
     if t[:8] == "1000*usv":
       t=t[8:-2]
-      r=(">>>1usv/h: " + t, round(float(t)/1e3,4))
+      v = float(t) / 10e2
+      datacontainer.ush = v
+      r=(">>>1usv/h: " + t, round(v,4))
       return r
     if "usv/h" in t:
       t=t.split("usv/h")[1].split('l')[0]
-      r=(">>>usv/h: "+t, round(float(t)/1e3,4) )
+      v = float(t) / 10e2
+      datacontainer.ush = v
+      r=(">>>usv/h: "+t, round(v,4) )
       return r
     if "ADC7" in t:
       t= t.split("e")[1].split("l")[0]
+      v = float(t) / 900*100
+      datacontainer.bat = v
       r=(">>>batt: "+t, round(float(t)/900*100,1))
   except:
     pass
@@ -231,8 +241,17 @@ def getTimestamp():
 class datacontainer:
     ush = None
     usa = 0
-    bat = None  
-  
+    bat = None
+
+    @staticmethod
+    def ToString():
+      ush = datacontainer.ush
+      if not ush:   ush = 0
+      bat = datacontainer.bat
+      if not bat:  bat = 0
+      s = f"µS/h:{ush:5.2f} ; µS acc:{datacontainer.usa:7.4f} ; Bat:{bat:4.1f}"
+      return s
+
 #-- main --
 def main():
   global baudrate, port, xonoff, verbosity
@@ -269,10 +288,11 @@ def main():
       if p in ("?","-?","-h"):
         print(__doc__)
   except: 
-    printf("error parsing args!")
+    print("error parsing args!")
 
   print(f"baud:{baudrate}, port:{port}, pyver:{sys.version}")
   s=serial.Serial(port=port, baudrate=baudrate, timeout=2)
+  print("Waiting for incoming data...")
   doit = 1
   lasttime=time.time()
   while doit:
@@ -292,9 +312,12 @@ def main():
             print(dumpasS32(r))
             print(dumpasdouble(r))
       else: 
-        if verbosity>1:
+        if verbosity>2:
           print(r.decode("utf-8","ignore"))
-      print(decode(r))
+      d =decode(r)
+      if verbosity:
+        print(d)
+      print(datacontainer.ToString())
 
 #--- main call ---  
 main()
