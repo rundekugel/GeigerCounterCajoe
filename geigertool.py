@@ -177,36 +177,29 @@ def decode(t):
   r = ""
   try:
     t = t.decode("utf-8", "ignore")
-    if t[:7] == "v*10000":
-      t=t[7:].split('l')[0]
-      v= float(t)/10e3
-      r=(">>>1 usv acc: "+t, round(v,7) )
-      datacontainer.usa = v
-      return r
-    if "v*10000" in t:
-      t=t.split("v*10000")[1].split('l')[0]
-      v= float(t)/10e3
-      r=(">>>usv acc: "+t, round(v,7) )
-      datacontainer.usa = v
-      return r
-    if t[:8] == "1000*usv":
-      t=t[8:-2]
-      v = float(t) / 10e2
-      datacontainer.ush = v
-      r=(">>>1usv/h: " + t, round(v,4))
-      return r
-    if "usv/h" in t:
-      t=t.split("usv/h")[1].split('l')[0]
-      v = float(t) / 10e2
-      datacontainer.ush = v
-      r=(">>>usv/h: "+t, round(v,4) )
-      return r
-    if "ADC7" in t:
-      t= t.split("e")[1].split("l")[0]
-      v = float(t) / 900*100
-      datacontainer.bat = v
-      r=(">>>batt: "+t, round(float(t)/900*100,1))
-  except:
+    t = t.strip()
+    ts = t.split('\r')
+    for t in ts:
+      t = t.strip()
+      if "usv*10000" in t:
+        t=t.split("v*10000")[1].split('l')[0]
+        v= float(t)/10e3
+        r=(">>>usv acc: "+t, round(v,7) )
+        datacontainer.usa = v
+        # return r
+      if "usv/h" in t:
+        t=t.split("usv/h")[1].split('l')[0]
+        v = float(t) / 10e2
+        datacontainer.ush = v
+        r=(">>>usv/h: "+t, round(v,4) )
+        # return r
+      if "ADC7" in t:
+        t= t.split("e")[1].split("l")[0]
+        v = float(t) / 900*100
+        datacontainer.bat = v
+        r=(">>>batt: "+t, round(float(t)/900*100,1))
+  except Exception as e:
+    print("Error in decoder:"+str(e))
     pass
   return r
 
@@ -259,6 +252,7 @@ def main():
   allFormat=0
   formats=[]
   timestamp=0
+  interval=2
   
   print("Reader for Cajoe Geiger Counter Version:"+__version__)
   
@@ -291,12 +285,12 @@ def main():
     print("error parsing args!")
 
   print(f"baud:{baudrate}, port:{port}, pyver:{sys.version}")
-  s=serial.Serial(port=port, baudrate=baudrate, timeout=2)
+  s=serial.Serial(port=port, baudrate=baudrate, timeout=interval)
   print("Waiting for incoming data...")
   doit = 1
   lasttime=time.time()
   while doit:
-    r=s.read(20)
+    r=s.read(50)
     if r:
       if timestamp:
         if timestamp=='r':
