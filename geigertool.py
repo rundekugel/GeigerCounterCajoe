@@ -16,7 +16,7 @@ import time
 import sys,os
 import struct
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 #print(sys.version)
 py3 = sys.version_info[0]==3
@@ -249,7 +249,7 @@ class datacontainer:
       if not ush:   ush = 0
       bat = datacontainer.bat
       if not bat:  bat = 0
-      s = f"µS/h:{ush:5.2f} ; µS acc:{datacontainer.usa:7.4f} ; Bat:{bat:4.1f}"
+      s = f"µSv/h:{ush:5.2f} ; µSv acc:{datacontainer.usa:7.4f} ; Bat:{bat:4.1f}"
       return s
 
 #-- main --
